@@ -1,0 +1,9 @@
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+sqlalchemy==2.0.29
+asyncpg==0.29.0
+pydantic==2.7.1
+python-multipart==0.0.9
+alembic==1.13.1
+apscheduler==3.10.4
+python-dotenv==1.0.1
