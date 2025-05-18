@@ -7,3 +7,4 @@ python-multipart==0.0.9
 alembic==1.13.1
 apscheduler==3.10.4
 python-dotenv==1.0.1
+psycopg2-binary==2.9.10

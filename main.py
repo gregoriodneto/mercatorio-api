@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import app.scripts.create_table
+
 app = FastAPI(
     title="Mercatorio Backend Challenge",
     version="1.0.0",
