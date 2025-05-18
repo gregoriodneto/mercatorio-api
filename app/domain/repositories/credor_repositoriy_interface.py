@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from domain.models.credor import Credor
+from app.domain.models.credor import Credor
 
 class CredorRepositoryInterface(ABC):
     @abstractmethod
