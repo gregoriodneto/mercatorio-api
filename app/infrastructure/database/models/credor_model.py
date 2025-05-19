@@ -11,4 +11,4 @@ class CredorModel(Base):
     email = Column(String, nullable=False)
     telefone = Column(String, nullable=False)
 
-    precatorios = relationship('PrecatorioModel', back_populates='credores')
+    precatorios = relationship('PrecatorioModel', back_populates='credor')

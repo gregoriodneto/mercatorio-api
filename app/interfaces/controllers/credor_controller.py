@@ -1,15 +1,32 @@
 from fastapi import APIRouter, HTTPException
 from app.use_cases.cadastrar_credor import CadastrarCredor
+from app.use_cases.buscar_credores import BuscarCredores
 from app.infrastructure.database.repositories.credor_repository import CredorRepository
 from app.interfaces.schemas.credor_schema import CredorInput, CredorOutput
+from app.interfaces.custom.response_model import ResponseModel
+from app.interfaces.custom.helpers import success_response, error_response
 
 router = APIRouter()
 
 repo = CredorRepository()
 use_case = CadastrarCredor(repo)
+use_case_get_all = BuscarCredores(repo)
 
-@router.post("/credores", response_model=CredorOutput, tags=["Credores"])
+@router.get("/credores", response_model=ResponseModel, tags=["Credores"])
+def criar_credor():
+    try:
+        credores = use_case_get_all.execute()
+        return success_response(
+            message="Lista de credores",
+            data=[CredorOutput(**vars(credor)) for credor in credores]
+        )
+    except Exception as e:
+        return error_response(message=str(e))
+
+@router.post("/credores", response_model=ResponseModel, tags=["Credores"])
 def criar_credor(credor_input: CredorInput):
-    credor_dict = credor_input.model_dump()
-    credor = use_case.execute(credor_dict)
-    return credor
+    try:
+        credor = use_case.execute(credor_input)
+        return success_response(message="Credor criado com sucesso",data=CredorOutput(**vars(credor)))
+    except Exception as e:
+        return error_response(message=str(e))
