@@ -2,15 +2,17 @@ from fastapi import APIRouter, HTTPException
 from app.use_cases.cadastrar_credor import CadastrarCredor
 from app.use_cases.buscar_credores import BuscarCredores
 from app.infrastructure.database.repositories.credor_repository import CredorRepository
+from app.infrastructure.database.repositories.precatorio_repository import PrecatorioRepository
 from app.interfaces.schemas.credor_schema import CredorInput, CredorOutput
 from app.interfaces.custom.response_model import ResponseModel
 from app.interfaces.custom.helpers import success_response, error_response
 
 router = APIRouter()
 
-repo = CredorRepository()
-use_case = CadastrarCredor(repo)
-use_case_get_all = BuscarCredores(repo)
+repo_credor = CredorRepository()
+repo_precatorio = PrecatorioRepository()
+use_case = CadastrarCredor(repo_credor, repo_precatorio)
+use_case_get_all = BuscarCredores(repo_credor)
 
 @router.get("/credores", response_model=ResponseModel, tags=["Credores"])
 def criar_credor():

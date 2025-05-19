@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from datetime import date
 
 class PrecatorioInput(BaseModel):
-    credor_id: int
     numero_precatorio: str
     valor_nominal: float
     foro: str
@@ -17,4 +16,6 @@ class PrecatorioOutput(BaseModel):
     data_publicacao: date
 
     class Config:
-        orm_mode = True
+        model_config = {
+            "from_attributes": True
+        }
