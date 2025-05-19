@@ -20,7 +20,7 @@ def criar_credor():
         credores = use_case_get_all.execute()
         return success_response(
             message="Lista de credores",
-            data=[CredorOutput(**vars(credor)) for credor in credores]
+            data=[credor.to_output() for credor in credores]
         )
     except Exception as e:
         return error_response(message=str(e))

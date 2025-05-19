@@ -16,44 +16,36 @@ class CadastrarCredor:
                 status_code=409,
                 detail="Credor com este CPF/CNPJ já existe."
             )
-        credor = Credor(
-            id=None,
-            nome=data.nome,
-            cpf_cnpj=data.cpf_cnpj,
-            email=data.email,
-            telefone=data.telefone
-        )
-        credor = self.credor_repository.adicionar(credor)
-
-        precatorios_salvos = []
-        for precatorio in data.precatorios:
-            prec = Precatorio(
+        
+        try:
+            credor = Credor(
                 id=None,
-                credor_id=credor.id,
-                numero_precatorio=precatorio.numero_precatorio,
-                valor_nominal=precatorio.valor_nominal,
-                foro=precatorio.foro,
-                data_publicacao=precatorio.data_publicacao,
+                nome=data.nome,
+                cpf_cnpj=data.cpf_cnpj,
+                email=data.email,
+                telefone=data.telefone
             )
-            prec_salvo = self.precatorio_repository.adicionar(prec)
-            precatorios_salvos.append(prec_salvo)
+            credor = self.credor_repository.adicionar(credor)
 
-        return CredorOutput(
-            id=credor.id,
-            nome=credor.nome,
-            cpf_cnpj=credor.cpf_cnpj,
-            email=credor.email,
-            telefone=credor.telefone,
-            precatorios=[
-                PrecatorioOutput(
-                    id=p.id,
-                    credor_id=p.credor_id,
-                    numero_precatorio=p.numero_precatorio,
-                    valor_nominal=p.valor_nominal,
-                    foro=p.foro,
-                    data_publicacao=p.data_publicacao
+            precatorios_salvos = []
+            for precatorio in data.precatorios:
+                prec = Precatorio(
+                    id=None,
+                    credor_id=credor.id,
+                    numero_precatorio=precatorio.numero_precatorio,
+                    valor_nominal=precatorio.valor_nominal,
+                    foro=precatorio.foro,
+                    data_publicacao=precatorio.data_publicacao,
                 )
-                for p in precatorios_salvos
-            ]
-        )
+                prec_salvo = self.precatorio_repository.adicionar(prec)
+                precatorios_salvos.append(prec_salvo)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Erro ao cadastrar um credor: {str(e)}"
+            )
+        
+        credor.precatorios = precatorios_salvos
+
+        return credor.to_output()
         
