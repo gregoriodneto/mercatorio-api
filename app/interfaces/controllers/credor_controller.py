@@ -48,9 +48,25 @@ def criar_credor(credor_input: CredorInput):
     
 
 @router.post("/credores/{id}/documentos", response_model=ResponseModel, tags=["Credores"])
-def upload_documentos_pessoais(credor_input: CredorInput):
+def upload_documentos_pessoais(id: int):
     try:
         credor = use_case.execute(credor_input)
+        return success_response(message="Credor criado com sucesso",data=CredorOutput(**vars(credor)))
+    except Exception as e:
+        return error_response(message=str(e))
+    
+@router.post("/credores/{id}/certidoes", response_model=ResponseModel, tags=["Credores"])
+def upload_manual_certidoes(id: int):
+    try:
+        credor = use_case.execute(id)
+        return success_response(message="Credor criado com sucesso",data=CredorOutput(**vars(credor)))
+    except Exception as e:
+        return error_response(message=str(e))
+    
+@router.post("/credores/{id}/buscar-certidoes", response_model=ResponseModel, tags=["Credores"])
+def simula_consulta_certidoes(id: int):
+    try:
+        credor = use_case.execute(id)
         return success_response(message="Credor criado com sucesso",data=CredorOutput(**vars(credor)))
     except Exception as e:
         return error_response(message=str(e))
