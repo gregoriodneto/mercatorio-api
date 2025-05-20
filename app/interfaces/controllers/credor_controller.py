@@ -1,10 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, File, UploadFile, Depends
 from app.use_cases.cadastrar_credor import CadastrarCredor
 from app.use_cases.buscar_credores import BuscarCredores
 from app.use_cases.buscar_credor_por_id import BuscarCredorPorId
+from app.use_cases.upload_documentos_pessoais import UploadDocumentosPessoais
 from app.infrastructure.database.repositories.credor_repository import CredorRepository
 from app.infrastructure.database.repositories.precatorio_repository import PrecatorioRepository
+from app.infrastructure.database.repositories.documento_repository import DocumentoRepository
 from app.interfaces.schemas.credor_schema import CredorInput, CredorOutput
+from app.interfaces.schemas.documento_schema import DocumentoOutput, DocumentoInput
 from app.interfaces.custom.response_model import ResponseModel
 from app.interfaces.custom.helpers import success_response, error_response
 
@@ -12,9 +15,12 @@ router = APIRouter()
 
 repo_credor = CredorRepository()
 repo_precatorio = PrecatorioRepository()
+repo_documento = DocumentoRepository()
+
 use_case = CadastrarCredor(repo_credor, repo_precatorio)
 use_case_get_all = BuscarCredores(repo_credor)
 use_case_get_by_id = BuscarCredorPorId(repo_credor)
+use_case_upload_documento_pessoal = UploadDocumentosPessoais(repo_documento, repo_credor)
 
 @router.get("/credores", response_model=ResponseModel, tags=["Credores"])
 def buscar_credores():
@@ -30,6 +36,8 @@ def buscar_credores():
 @router.get("/credores/{id}", response_model=ResponseModel, tags=["Credores"])
 def buscar_credor_por_id(id: int):
     try:
+        if id is None:
+            return error_response(message="Necessário enviar o id do credor.")
         credor = use_case_get_by_id.execute(id)
         return success_response(
             message="Lista de credores",
@@ -47,15 +55,21 @@ def criar_credor(credor_input: CredorInput):
         return error_response(message=str(e))
     
 
-@router.post("/credores/{id}/documentos", response_model=ResponseModel, tags=["Credores"])
-def upload_documentos_pessoais(id: int):
-    try:
-        credor = use_case.execute(credor_input)
-        return success_response(message="Credor criado com sucesso",data=CredorOutput(**vars(credor)))
+@router.post("/credores/{id}/documentos", response_model=ResponseModel, tags=["Documentos"])
+async def upload_documentos_pessoais(
+    id: int, 
+    documento: DocumentoInput = Depends(DocumentoInput.as_form), 
+    file: UploadFile = File(...)
+    ):
+    try:        
+        if id is None:
+            return error_response(message="Necessário enviar o id do credor.")     
+        documento = await use_case_upload_documento_pessoal.execute(id, documento, file)
+        return success_response(message="Documento Pessoal cadastrado com sucesso!",data=DocumentoOutput(**vars(documento)))
     except Exception as e:
         return error_response(message=str(e))
     
-@router.post("/credores/{id}/certidoes", response_model=ResponseModel, tags=["Credores"])
+@router.post("/credores/{id}/certidoes", response_model=ResponseModel, tags=["Certidões"])
 def upload_manual_certidoes(id: int):
     try:
         credor = use_case.execute(id)
@@ -63,7 +77,7 @@ def upload_manual_certidoes(id: int):
     except Exception as e:
         return error_response(message=str(e))
     
-@router.post("/credores/{id}/buscar-certidoes", response_model=ResponseModel, tags=["Credores"])
+@router.post("/credores/{id}/buscar-certidoes", response_model=ResponseModel, tags=["Certidões"])
 def simula_consulta_certidoes(id: int):
     try:
         credor = use_case.execute(id)

@@ -12,3 +12,4 @@ class CredorModel(Base):
     telefone = Column(String, nullable=False)
 
     precatorio = relationship('PrecatorioModel', back_populates='credor', uselist=False)
+    documento = relationship('DocumentoModel', back_populates='credor', uselist=False)

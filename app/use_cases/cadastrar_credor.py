@@ -1,6 +1,4 @@
 from fastapi import HTTPException
-from app.interfaces.schemas.credor_schema import CredorOutput
-from app.interfaces.schemas.precatorio_schema import PrecatorioOutput
 from app.domain.models.credor import Credor
 from app.domain.models.precatorio import Precatorio
 
