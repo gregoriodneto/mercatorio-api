@@ -3,7 +3,6 @@ from app.domain.models.credor import Credor
 from app.domain.models.precatorio import Precatorio
 from app.domain.repositories.credor_repositoriy_interface import CredorRepositoryInterface
 from app.infrastructure.database.models.credor_model import CredorModel
-from app.infrastructure.database.models.precatorio_model import PrecatorioModel
 from app.infrastructure.database.db_config import SessionLocal
 
 class CredorRepository(CredorRepositoryInterface):

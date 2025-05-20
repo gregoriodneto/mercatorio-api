@@ -11,4 +11,4 @@ class DocumentoModel(Base):
     arquivo_url = Column(String, nullable=False)
     enviado_em = Column(Date, nullable=False)
 
-    credor = relationship('CredorModel', back_populates='documento')
+    credor = relationship('CredorModel', back_populates='documentos')

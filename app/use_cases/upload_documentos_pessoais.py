@@ -26,12 +26,12 @@ class UploadDocumentosPessoais:
                 detail="Credor não existe."
             )
         
-        documento_cadastrado_credor = self.documentos_repository.documento_adicionado_ao_credor(credor_id)
-        if documento_cadastrado_credor:
-            raise HTTPException(
-                status_code=404,
-                detail="Documento já cadastrado no credor informado."
-            )
+        # documento_cadastrado_credor = self.documentos_repository.documento_adicionado_ao_credor(credor_id)
+        # if documento_cadastrado_credor:
+        #     raise HTTPException(
+        #         status_code=404,
+        #         detail="Documento já cadastrado no credor informado."
+        #     )
 
         contents = await file.read()
         file_path = f"{UPLOAD_DIR}/uploads_{file.filename}"
