@@ -27,25 +27,22 @@ class CadastrarCredor:
             )
             credor = self.credor_repository.adicionar(credor)
 
-            precatorios_salvos = []
-            for precatorio in data.precatorios:
-                prec = Precatorio(
-                    id=None,
-                    credor_id=credor.id,
-                    numero_precatorio=precatorio.numero_precatorio,
-                    valor_nominal=precatorio.valor_nominal,
-                    foro=precatorio.foro,
-                    data_publicacao=precatorio.data_publicacao,
-                )
-                prec_salvo = self.precatorio_repository.adicionar(prec)
-                precatorios_salvos.append(prec_salvo)
+            prec_salvo = Precatorio(
+                id=None,
+                credor_id=credor.id,
+                numero_precatorio=data.precatorio.numero_precatorio,
+                valor_nominal=data.precatorio.valor_nominal,
+                foro=data.precatorio.foro,
+                data_publicacao=data.precatorio.data_publicacao,
+            )
+            prec_salvo = self.precatorio_repository.adicionar(prec_salvo)
         except Exception as e:
             raise HTTPException(
                 status_code=500,
                 detail=f"Erro ao cadastrar um credor: {str(e)}"
             )
         
-        credor.precatorios = precatorios_salvos
+        credor.precatorio = prec_salvo
 
         return credor.to_output()
         

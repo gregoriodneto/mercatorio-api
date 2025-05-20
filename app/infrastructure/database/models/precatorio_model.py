@@ -12,4 +12,4 @@ class PrecatorioModel(Base):
     foro = Column(String, nullable=False)
     data_publicacao = Column(Date, nullable=False)
 
-    credor = relationship('CredorModel', back_populates='precatorios')
+    credor = relationship('CredorModel', back_populates='precatorio')

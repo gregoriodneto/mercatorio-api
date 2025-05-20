@@ -2,13 +2,13 @@ from app.interfaces.schemas.credor_schema import CredorOutput
 from app.interfaces.schemas.precatorio_schema import PrecatorioOutput
 
 class Credor:
-    def __init__(self, id, nome, cpf_cnpj, email, telefone, precatorios = []):
+    def __init__(self, id, nome, cpf_cnpj, email, telefone, precatorio = None):
         self.id = id
         self.nome = nome
         self.cpf_cnpj = cpf_cnpj
         self.email = email
         self.telefone = telefone
-        self.precatorios = precatorios
+        self.precatorio = precatorio
 
     def to_output(self) -> CredorOutput:
         return CredorOutput(
@@ -17,15 +17,14 @@ class Credor:
             cpf_cnpj=self.cpf_cnpj,
             email=self.email,
             telefone=self.telefone,
-            precatorios=[
+            precatorio=(
                 PrecatorioOutput(
-                    id=p.id,
-                    credor_id=p.credor_id,
-                    numero_precatorio=p.numero_precatorio,
-                    valor_nominal=p.valor_nominal,
-                    foro=p.foro,
-                    data_publicacao=p.data_publicacao
-                )
-                for p in self.precatorios
-            ]
+                    id=self.precatorio.id,
+                    credor_id=self.precatorio.credor_id,
+                    numero_precatorio=self.precatorio.numero_precatorio,
+                    valor_nominal=self.precatorio.valor_nominal,
+                    foro=self.precatorio.foro,
+                    data_publicacao=self.precatorio.data_publicacao
+                ) if self.precatorio else None
+            )            
         )

@@ -42,7 +42,7 @@ def buscar_credor_por_id(id: int):
 def criar_credor(credor_input: CredorInput):
     try:
         credor = use_case.execute(credor_input)
-        return success_response(message="Credor criado com sucesso",data=credor.to_output())
+        return success_response(message="Credor criado com sucesso",data=credor)
     except Exception as e:
         return error_response(message=str(e))
     
