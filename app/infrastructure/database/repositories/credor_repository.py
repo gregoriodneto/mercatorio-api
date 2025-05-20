@@ -24,16 +24,27 @@ class CredorRepository(CredorRepositoryInterface):
         return credor
 
     def obter_por_id(self, credor_id: int) -> Credor:
-        db_credor = self.session.query(CredorModel).filter_by(id=credor_id).first()
+        db_credor = self.session.query(CredorModel).options(joinedload(CredorModel.precatorios)).filter_by(id=credor_id).first()
         if db_credor is None:
             return None
         return Credor(
-            id=db_credor.id,
-            nome=db_credor.nome,
-            cpf_cnpj=db_credor.cpf_cnpj,
-            email=db_credor.email,
-            telefone=db_credor.telefone
-        )
+                id=db_credor.id,
+                nome=db_credor.nome,
+                cpf_cnpj=db_credor.cpf_cnpj,
+                email=db_credor.email,
+                telefone=db_credor.telefone,
+                precatorios=[
+                    Precatorio(
+                        id=p.id,
+                        credor_id=p.credor_id,
+                        numero_precatorio=p.numero_precatorio,
+                        data_publicacao=p.data_publicacao,
+                        foro=p.foro,
+                        valor_nominal=p.valor_nominal
+                    )
+                    for p in db_credor.precatorios
+                ]
+            )
 
     def obter_por_cpf_cnpj(self, cpf_cnpj: str) -> Credor:
         db_credor = self.session.query(CredorModel).filter_by(cpf_cnpj=cpf_cnpj).first()
