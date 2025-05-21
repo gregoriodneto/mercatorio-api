@@ -57,6 +57,18 @@ Acesse o Swagger:
 
 
 ## ✅ Observação:
+Na rota ```POST /credores/:id/certidoes``` no ```Swagger``` para enviar o arquivo será desta forma:
+```bash
+curl -X POST "http://127.0.0.1:8000/credores/2/certidoes" \
+  -F "origem=manual" \
+  -F "tipo=negativa" \
+  -F "status=pendente" \
+  -F "file=@/caminho/arquivo.png"
+```
+Por que no Swagger como nesta parte não é obrigatório o File devido a regra de negócios
+Que ele pode buscar com base na origem sendo ```api``` em vez de ```manual```, então 
+não irá permitir seleciar um arquivo ```Swagger```.
+
 Para rodar com Docker, basta utilizar:
 ```bash
 docker-compose up --build
