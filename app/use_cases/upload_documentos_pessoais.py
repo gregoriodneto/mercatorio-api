@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.domain.models.documento_pessoal import DocumentoPessoal
 from app.interfaces.schemas.documento_schema import DocumentoInput
-from app.interfaces.custom.file_verification import validar_arquivo
+from app.interfaces.custom.file_verification import validar_arquivo, upload_arquivo
 
 UPLOAD_DIR="uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -28,18 +28,12 @@ class UploadDocumentosPessoais:
                 status_code=404,
                 detail="Credor não existe."
             )
-        
-        # documento_cadastrado_credor = self.documentos_repository.documento_adicionado_ao_credor(credor_id)
-        # if documento_cadastrado_credor:
-        #     raise HTTPException(
-        #         status_code=404,
-        #         detail="Documento já cadastrado no credor informado."
-        #     )
 
-        contents = await file.read()
-        file_path = f"{UPLOAD_DIR}/uploads_{file.filename}"
-        with open(file_path, "wb") as f:
-            f.write(contents)
+        file_path = await upload_arquivo(
+            credor_id=credor_id,
+            tipo_arquivo="documento",
+            file=file
+        )
 
         documento = DocumentoPessoal(
             id=None,

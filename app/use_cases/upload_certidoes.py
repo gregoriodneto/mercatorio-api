@@ -3,11 +3,8 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.domain.models.certidao import Certidao
 from app.interfaces.schemas.certidao_schema import CertidaoInput
-from app.interfaces.custom.file_verification import validar_arquivo
+from app.interfaces.custom.file_verification import validar_arquivo, upload_arquivo
 from app.infrastructure.services.certidao_api_mock import gerar_certidao_base64, consultar_certidoes_externas
-
-UPLOAD_DIR="uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 class UploadCertidoes:
     def __init__(self, certidao_repository, credor_repository):
@@ -31,11 +28,12 @@ class UploadCertidoes:
                         detail="Necessário enviar a certidao pessoal."
                     ) 
                 validar_arquivo(file)
-                 
-                contents = await file.read()
-                file_path = f"{UPLOAD_DIR}/uploads_{file.filename}"
-                with open(file_path, "wb") as f:
-                    f.write(contents)
+
+                file_path = await upload_arquivo(
+                    credor_id=credor_id,
+                    tipo_arquivo="certidao",
+                    file=file
+                )
 
                 base64 = gerar_certidao_base64(file_path)
 
