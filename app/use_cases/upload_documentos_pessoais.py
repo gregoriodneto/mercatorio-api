@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.domain.models.documento_pessoal import DocumentoPessoal
 from app.interfaces.schemas.documento_schema import DocumentoInput
+from app.interfaces.custom.file_verification import validar_arquivo
 
 UPLOAD_DIR="uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -17,7 +18,9 @@ class UploadDocumentosPessoais:
             raise HTTPException(
                 status_code=404,
                 detail="Necessário enviar documento pessoal."
-            )        
+            )  
+
+        validar_arquivo(file)  
         
         credor = self.credor_repository.obter_por_id(credor_id)
         if credor is None:

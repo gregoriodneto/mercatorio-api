@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.domain.models.certidao import Certidao
 from app.interfaces.schemas.certidao_schema import CertidaoInput
+from app.interfaces.custom.file_verification import validar_arquivo
 from app.infrastructure.services.certidao_api_mock import gerar_certidao_base64, consultar_certidoes_externas
 
 UPLOAD_DIR="uploads"
@@ -28,7 +29,9 @@ class UploadCertidoes:
                     raise HTTPException(
                         status_code=404,
                         detail="Necessário enviar a certidao pessoal."
-                    )  
+                    ) 
+                validar_arquivo(file)
+                 
                 contents = await file.read()
                 file_path = f"{UPLOAD_DIR}/uploads_{file.filename}"
                 with open(file_path, "wb") as f:
