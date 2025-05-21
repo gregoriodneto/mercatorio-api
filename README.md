@@ -25,20 +25,41 @@ cd mercatorio-api
 
 2. Crie o arquivo ```.env``` (siga o .env.example):
 ```bash
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-POSTGRES_DB=
-DATABASE_URL=
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres123
+POSTGRES_DB=mercatorio
+DATABASE_URL=postgresql://postgres:postgres123@localhost:5432/mercatorio
+
+API_MOCK_CERTIDOES=http://127.0.0.1:8001/api/certidoes
+
+DAYS_UPDATE_CERTIDAO_JOB=30
+SCHEDULE_RUN_TRIGGER_INTERVAL_HOURS=24
 ```
 
-3. Suba o ambiente com Docker:
+3. Instale as dependências (Para utilizar local):
+```bash
+pip install -r requirements.txt
+```
+
+4. Rode a API principal (Para utilizar local):
+```bash
+uvicorn main:app --reload --port 8000
+```
+Acesseo o Swagger:
+➡️ http://localhost:8000/docs
+
+5. Rode a API de mock de certidões (Para utilizar local):
+```bash
+uvicorn app.infrastructure.services.certidao_api_mock:app --reload --port 8001
+```
+Acesse o Swagger:
+➡️ http://localhost:8001/docs
+
+
+## ✅ Observação:
+Para rodar com Docker, basta utilizar:
 ```bash
 docker-compose up --build
-```
-
-4. Acesse a documentação Swagger:
-```bash
-http://localhost:8000/api/docs
 ```
 
 ## 📂 Endpoints principais
@@ -47,4 +68,4 @@ http://localhost:8000/api/docs
 - ```POST /credores/:id/certidoes```: Upload manual de certidões
 - ```POST /credores/:id/buscar-certidoes```: Obtenção via API mock
 - ```GET /credores/:id```: Consulta geral do credor
-- ```GET /api/certidoes```: API mock de certidões (query param cpf_cnpj)
+- ```GET /api/certidoes?cpf_cnpj=00000000000```: API mock de certidões (query param cpf_cnpj)
