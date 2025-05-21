@@ -1,6 +1,8 @@
 from sqlalchemy.orm import joinedload
 from app.domain.models.credor import Credor
 from app.domain.models.precatorio import Precatorio
+from app.domain.models.documento_pessoal import DocumentoPessoal
+from app.domain.models.certidao import Certidao
 from app.domain.repositories.credor_repositoriy_interface import CredorRepositoryInterface
 from app.infrastructure.database.models.credor_model import CredorModel
 from app.infrastructure.database.db_config import SessionLocal
@@ -23,7 +25,11 @@ class CredorRepository(CredorRepositoryInterface):
         return credor
 
     def obter_por_id(self, credor_id: int) -> Credor:
-        db_credor = self.session.query(CredorModel).options(joinedload(CredorModel.precatorio)).filter_by(id=credor_id).first()
+        db_credor = self.session.query(CredorModel).options(
+            joinedload(CredorModel.precatorio),
+            joinedload(CredorModel.documentos),
+            joinedload(CredorModel.certidoes)
+        ).filter_by(id=credor_id).first()
         if db_credor is None:
             return None
         return Credor(
@@ -40,7 +46,33 @@ class CredorRepository(CredorRepositoryInterface):
                         data_publicacao=db_credor.precatorio.data_publicacao,
                         foro=db_credor.precatorio.foro,
                         valor_nominal=db_credor.precatorio.valor_nominal
-                    )
+                    ),
+                documentos=(
+                    (   
+                        DocumentoPessoal(
+                            id=documento.id,
+                            arquivo_url=documento.arquivo_url,
+                            credor_id=documento.credor_id,
+                            enviado_em=documento.enviado_em,
+                            tipo=documento.tipo
+                        )             
+                        for documento in db_credor.documentos
+                    ) if db_credor.documentos else None
+                ),
+                certidoes=(
+                    (   
+                        Certidao(
+                            id=certidao.id,
+                            conteudo_base64=certidao.conteudo_base64,
+                            credor_id=certidao.credor_id,
+                            tipo=certidao.tipo,
+                            origem=certidao.origem,
+                            recebida_em=certidao.recebida_em,
+                            status=certidao.status,
+                        )             
+                        for certidao in db_credor.certidoes
+                    ) if db_credor.certidoes else None
+                )
                 
             )
 
@@ -50,6 +82,8 @@ class CredorRepository(CredorRepositoryInterface):
             return None
         
         db_precatorio = db_credor.precatorio[0] if db_credor.precatorio else None
+        db_documentos = db_credor.documentos[0] if db_credor.documentos else None
+        db_certidoes = db_credor.certidoes[0] if db_credor.certidoes else None
 
         return Credor(
             id=db_credor.id,
@@ -64,7 +98,33 @@ class CredorRepository(CredorRepositoryInterface):
                 data_publicacao=db_precatorio.data_publicacao,
                 foro=db_precatorio.foro,
                 valor_nominal=db_precatorio.valor_nominal
-            ) if db_precatorio else None
+            ) if db_precatorio else None,
+            documentos=(
+                (   
+                    DocumentoPessoal(
+                        id=documento.id,
+                        arquivo_url=documento.arquivo_url,
+                        credor_id=documento.credor_id,
+                        enviado_em=documento.enviado_em,
+                        tipo=documento.tipo
+                    )             
+                    for documento in db_documentos
+                ) if db_documentos else None
+            ),
+            certidoes=(
+                (   
+                    Certidao(
+                        id=certidao.id,
+                        conteudo_base64=certidao.conteudo_base64,
+                        credor_id=certidao.credor_id,
+                        tipo=certidao.tipo,
+                        origem=certidao.origem,
+                        recebida_em=certidao.recebida_em,
+                        status=certidao.status,
+                    )             
+                    for certidao in db_certidoes
+                ) if db_certidoes else None
+            )
         )
 
     def listar_todos(self) -> list[Credor]:
@@ -85,7 +145,33 @@ class CredorRepository(CredorRepositoryInterface):
                         foro=c.precatorio.foro,
                         valor_nominal=c.precatorio.valor_nominal
                     ) if c.precatorio else None
-                )                    
+                ),
+                documentos=(
+                    (   
+                        DocumentoPessoal(
+                            id=documento.id,
+                            arquivo_url=documento.arquivo_url,
+                            credor_id=documento.credor_id,
+                            enviado_em=documento.enviado_em,
+                            tipo=documento.tipo
+                        )             
+                        for documento in c.documentos
+                    ) if c.documentos else None
+                ),
+                certidoes=(
+                    (   
+                        Certidao(
+                            id=certidao.id,
+                            conteudo_base64=certidao.conteudo_base64,
+                            credor_id=certidao.credor_id,
+                            tipo=certidao.tipo,
+                            origem=certidao.origem,
+                            recebida_em=certidao.recebida_em,
+                            status=certidao.status,
+                        )             
+                        for certidao in c.certidoes
+                    ) if c.certidoes else None
+                )                                    
             )
             for c in db_credores
         ]

@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from app.interfaces.schemas.precatorio_schema import PrecatorioOutput, PrecatorioInput
+from app.interfaces.schemas.documento_schema import DocumentoOutput
+from app.interfaces.schemas.certidao_schema import CertidaoOutput
 
 class CredorInput(BaseModel):
     nome: str = Field(..., example="João da Silva")
@@ -32,6 +34,8 @@ class CredorOutput(BaseModel):
     email: EmailStr
     telefone: str
     precatorio: Optional[PrecatorioOutput] = None
+    documentos: Optional[list[DocumentoOutput]] = []
+    certidoes: Optional[list[CertidaoOutput]] = []
 
     class Config:
         model_config = {
