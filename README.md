@@ -17,6 +17,7 @@ API REST desenvolvida com FastAPI para simular o processo de originação de pre
 - APScheduler (para revalidação automática de certidões)
 
 ## 📦 Como executar
+### ✅ Backend
 1. Clone o repositório:
 ```bash
 git clone https://github.com/seu-usuario/mercatorio-api.git
@@ -72,6 +73,32 @@ não irá permitir seleciar um arquivo ```Swagger```.
 Para rodar com Docker, basta utilizar:
 ```bash
 docker-compose up --build
+```
+
+### ✅ Frontend
+O projeto inclui uma interface web simples para upload e visualização de documentos, desenvolvida com HTML, Bootstrap e JavaScript.
+
+## Estrutura do Frontend:
+```bash
+/frontend
+  ├── upload.html
+  ├── visualizacao.html
+  └── js/
+```
+
+1. Acesse a pasta frontend:
+```bash
+cd frontend
+```
+
+2. Utilize o Live Server para rodar o frontend localmente.
+Se estiver utilizando o VS Code, instale a extensão Live Server.
+
+3. Com a extensão instalada, clique com o botão direito sobre upload.html ou index.html e selecione "Open with Live Server".
+
+4. O frontend será iniciado automaticamente, geralmente em:
+```bash
+http://127.0.0.1:5500/upload.html
 ```
 
 ## 📂 Endpoints principais
