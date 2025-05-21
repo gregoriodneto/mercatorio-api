@@ -12,8 +12,8 @@ class CertidaoInput(BaseModel):
     def as_form(
         cls,
         origem: str = Form(...),
-        tipo: str = Form(...),        
-        status: str = Form(...),
+        tipo: Optional[str] = Form(None),        
+        status: Optional[str] = Form(None),
     ):
         return cls(
             tipo=tipo,
@@ -28,7 +28,7 @@ class CertidaoOutput(BaseModel):
     origem: str
     conteudo_base64: str
     status: str
-    ecebida_em: datetime
+    recebida_em: datetime
 
     class Config:
         model_config = {

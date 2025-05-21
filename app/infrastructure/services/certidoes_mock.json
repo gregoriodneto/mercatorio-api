@@ -1,0 +1,38 @@
+{
+"123.456.789-00": [
+    {
+      "tipo": "federal",
+      "status": "negativa",
+      "conteudo_base64": "Q2VydGlkw6NvIEZlZGVyYWwgZGUgMTIzNDU2Nzg5MDE="
+    },
+    {
+      "tipo": "trabalhista",
+      "status": "positiva",
+      "conteudo_base64": "Q2VydGlkw6NvIFRyYWJhbGhpc3RhIGRlIDEyMzQ1Njc4OTAx"
+    }
+  ],
+  "123.456.789-01": [
+    {
+      "tipo": "federal",
+      "status": "negativa",
+      "conteudo_base64": "Q2VydGlkw6NvIEZlZGVyYWwgZGUgMTIzNDU2Nzg5MDE="
+    },
+    {
+      "tipo": "trabalhista",
+      "status": "positiva",
+      "conteudo_base64": "Q2VydGlkw6NvIFRyYWJhbGhpc3RhIGRlIDEyMzQ1Njc4OTAx"
+    }
+  ],
+  "987.654.321-00": [
+    {
+      "tipo": "estadual",
+      "status": "regular",
+      "conteudo_base64": "Q2VydGlkw6NvIEVzdGFkdWFsIGRlIDk4NzY1NDMyMTAw"
+    },
+    {
+      "tipo": "municipal",
+      "status": "isento",
+      "conteudo_base64": "Q2VydGlkw6NvIE11bmljaXBhbCBkZSA5ODc2NTQzMjEwMA=="
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, File, UploadFile, Depends
+from typing import Optional
 from app.use_cases.cadastrar_credor import CadastrarCredor
 from app.use_cases.buscar_credores import BuscarCredores
 from app.use_cases.buscar_credor_por_id import BuscarCredorPorId
@@ -78,13 +79,16 @@ async def upload_documentos_pessoais(
 async def upload_manual_certidoes(
     id: int,
     certidao: CertidaoInput = Depends(CertidaoInput.as_form), 
-    file: UploadFile = File(...)
+    file: Optional[UploadFile] = File(None)
     ):
     try:
         if id is None:
             return error_response(message="Necessário enviar o id do credor.")
-        certidao = await use_case_upload_certidao.execute(id, certidao, file)
-        return success_response(message="Certidão vinculada ao credor",data=None)
+        certidoes = await use_case_upload_certidao.execute(id, certidao, file)
+        return success_response(
+            message="Certidão vinculada ao credor",
+            data=[CertidaoOutput(**vars(certidao)) for certidao in certidoes]
+        )
     except Exception as e:
         return error_response(message=str(e))
     

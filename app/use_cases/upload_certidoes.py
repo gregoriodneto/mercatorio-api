@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.domain.models.certidao import Certidao
 from app.interfaces.schemas.certidao_schema import CertidaoInput
-from app.infrastructure.services.certidao_api_mock import gerar_certidao_base64, consultar_certidoes
+from app.infrastructure.services.certidao_api_mock import gerar_certidao_base64, consultar_certidoes_externas
 
 UPLOAD_DIR="uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -22,6 +22,7 @@ class UploadCertidoes:
             )
         
         try:
+            certidoes_cadastradas = []
             if certidao_input.origem == "manual":
                 if file is None:
                     raise HTTPException(
@@ -44,22 +45,33 @@ class UploadCertidoes:
                     status=certidao_input.status,
                     recebida_em=datetime.now(timezone.utc)
                 )
-                self.certidao_repository.adicionar(certidao)
-            else:
-                certidoes_api = consultar_certidoes(cpf_cnpj=credor.cpf_cnpj)
-                for c in certidoes_api:
+                certidao_cad = self.certidao_repository.adicionar(certidao)
+                certidoes_cadastradas.append(certidao_cad)
+            elif certidao_input.origem == "api":               
+                certidoes_api = consultar_certidoes_externas(cpf_cnpj=credor.cpf_cnpj)
+                if "certidoes" not in certidoes_api:
+                    raise HTTPException(
+                        status_code=500,
+                        detail="Api externa não retornou certidões."
+                    )
+                for c in certidoes_api["certidoes"]:
                     certidao = Certidao(
                         id=None,
                         credor_id=credor_id,
-                        tipo=c.tipo,
-                        conteudo_base64=gerar_certidao_base64(c.conteudo_base64),
+                        tipo=c["tipo"],
+                        conteudo_base64=gerar_certidao_base64(c["conteudo_base64"]),
                         origem=certidao_input.origem,
-                        status=c.status,
+                        status=c["status"],
                         recebida_em=datetime.now(timezone.utc)
                     )
-                    self.certidao_repository.adicionar(certidao)
-            
-            return None
+                    certidao_cad = self.certidao_repository.adicionar(certidao)
+                    certidoes_cadastradas.append(certidao_cad)
+            else:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Origem de referência não existe."
+                )
+            return certidoes_cadastradas
         except Exception as e:
             raise HTTPException(
                 status_code=500,
