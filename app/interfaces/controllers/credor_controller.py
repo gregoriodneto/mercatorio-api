@@ -25,7 +25,7 @@ use_case = CadastrarCredor(repo_credor, repo_precatorio)
 use_case_get_all = BuscarCredores(repo_credor)
 use_case_get_by_id = BuscarCredorPorId(repo_credor)
 use_case_upload_documento_pessoal = UploadDocumentosPessoais(repo_documento, repo_credor)
-use_case_upload_certidao = UploadCertidoes(repo_documento, repo_credor)
+use_case_upload_certidao = UploadCertidoes(repo_certidao, repo_credor)
 
 @router.get("/credores", response_model=ResponseModel, tags=["Credores"])
 def buscar_credores():

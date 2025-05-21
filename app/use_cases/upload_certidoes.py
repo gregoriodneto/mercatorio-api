@@ -21,41 +21,47 @@ class UploadCertidoes:
                 detail="Credor não existe."
             )
         
-        if certidao_input.origem == "manual":
-            if file is None:
-                raise HTTPException(
-                    status_code=404,
-                    detail="Necessário enviar a certidao pessoal."
-                )  
-            contents = await file.read()
-            file_path = f"{UPLOAD_DIR}/uploads_{file.filename}"
-            with open(file_path, "wb") as f:
-                f.write(contents)
+        try:
+            if certidao_input.origem == "manual":
+                if file is None:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Necessário enviar a certidao pessoal."
+                    )  
+                contents = await file.read()
+                file_path = f"{UPLOAD_DIR}/uploads_{file.filename}"
+                with open(file_path, "wb") as f:
+                    f.write(contents)
 
-            base64 = gerar_certidao_base64(file_path)
+                base64 = gerar_certidao_base64(file_path)
 
-            certidao = Certidao(
-                id=None,
-                credor_id=credor_id,
-                tipo=certidao_input.tipo,
-                conteudo_base64=base64,
-                origem=certidao_input.origem,
-                status=certidao_input.status,
-                recebida_em=datetime.now(timezone.utc)
-            )
-            self.certidao_repository.adicionar(certidao)
-        else:
-            certidoes_api = consultar_certidoes(cpf_cnpj=credor.cpf_cnpj)
-            for c in certidoes_api:
                 certidao = Certidao(
                     id=None,
                     credor_id=credor_id,
-                    tipo=c.tipo,
-                    conteudo_base64=gerar_certidao_base64(c.conteudo_base64),
+                    tipo=certidao_input.tipo,
+                    conteudo_base64=base64,
                     origem=certidao_input.origem,
-                    status=c.status,
+                    status=certidao_input.status,
                     recebida_em=datetime.now(timezone.utc)
                 )
                 self.certidao_repository.adicionar(certidao)
-        
-        return None
+            else:
+                certidoes_api = consultar_certidoes(cpf_cnpj=credor.cpf_cnpj)
+                for c in certidoes_api:
+                    certidao = Certidao(
+                        id=None,
+                        credor_id=credor_id,
+                        tipo=c.tipo,
+                        conteudo_base64=gerar_certidao_base64(c.conteudo_base64),
+                        origem=certidao_input.origem,
+                        status=c.status,
+                        recebida_em=datetime.now(timezone.utc)
+                    )
+                    self.certidao_repository.adicionar(certidao)
+            
+            return None
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=str(e)
+            ) 
