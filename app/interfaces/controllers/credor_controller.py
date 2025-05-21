@@ -5,6 +5,7 @@ from app.use_cases.buscar_credores import BuscarCredores
 from app.use_cases.buscar_credor_por_id import BuscarCredorPorId
 from app.use_cases.upload_documentos_pessoais import UploadDocumentosPessoais
 from app.use_cases.upload_certidoes import UploadCertidoes
+from app.use_cases.buscar_certidoes import BuscarCertidoes
 from app.infrastructure.database.repositories.credor_repository import CredorRepository
 from app.infrastructure.database.repositories.precatorio_repository import PrecatorioRepository
 from app.infrastructure.database.repositories.documento_repository import DocumentoRepository
@@ -27,6 +28,7 @@ use_case_get_all = BuscarCredores(repo_credor)
 use_case_get_by_id = BuscarCredorPorId(repo_credor)
 use_case_upload_documento_pessoal = UploadDocumentosPessoais(repo_documento, repo_credor)
 use_case_upload_certidao = UploadCertidoes(repo_certidao, repo_credor)
+use_case_buscar_certidoes = BuscarCertidoes(repo_credor)
 
 @router.get("/credores", response_model=ResponseModel, tags=["Credores"])
 def buscar_credores():
@@ -95,7 +97,12 @@ async def upload_manual_certidoes(
 @router.post("/credores/{id}/buscar-certidoes", response_model=ResponseModel, tags=["Credores"])
 def simula_consulta_certidoes(id: int):
     try:
-        credor = use_case.execute(id)
-        return success_response(message="Credor criado com sucesso",data=CredorOutput(**vars(credor)))
+        if id is None:
+            return error_response(message="Necessário enviar o id do credor.")
+        certidoes = use_case_buscar_certidoes.execute(id)
+        return success_response(
+            message="Busca de certidões na API mock com base no credor realizado com sucesso!",
+            data=[CertidaoOutput(**vars(certidao)) for certidao in certidoes]
+        )
     except Exception as e:
         return error_response(message=str(e))

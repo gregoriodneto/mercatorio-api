@@ -22,7 +22,7 @@ class CertidaoInput(BaseModel):
         )
 
 class CertidaoOutput(BaseModel):
-    id: int
+    id: Optional[int]
     tipo: str
     credor_id: int
     origem: str

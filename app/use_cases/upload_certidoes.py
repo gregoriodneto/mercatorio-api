@@ -59,7 +59,7 @@ class UploadCertidoes:
                         id=None,
                         credor_id=credor_id,
                         tipo=c["tipo"],
-                        conteudo_base64=gerar_certidao_base64(c["conteudo_base64"]),
+                        conteudo_base64=c["conteudo_base64"],
                         origem=certidao_input.origem,
                         status=c["status"],
                         recebida_em=datetime.now(timezone.utc)
